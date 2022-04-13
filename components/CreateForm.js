@@ -20,7 +20,6 @@ export default function CreateForm({ handleAddReport, hours }) {
         };
 
         handleAddReport(report);
-        
     }
   
     return(
