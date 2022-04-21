@@ -1,9 +1,15 @@
-export default function CreateForm({ handleAddReport, hours }) {
+import useResource from "../hooks/useResource";
+import { useAuth } from "../contexts/auth";
+
+export default function CreateForm({hours}) {
+    const { createResource } = useResource()
+    const { user } = useAuth()
+    
     function handleSubmit(event) {
         event.preventDefault();
-  
+
         let dailyData = [];
-      
+    
         for (let hour in hours) {
             let min_customers_per_hour = parseFloat(event.target.min_customers_per_hour.value);
             let max_customers_per_hour = parseFloat(event.target.max_customers_per_hour.value);
@@ -12,14 +18,19 @@ export default function CreateForm({ handleAddReport, hours }) {
             let hourSalesNumber = Math.floor((Math.random() * (max_customers_per_hour - min_customers_per_hour) + min_customers_per_hour) * avg_cookies_per_sale);
 
             dailyData.push(hourSalesNumber);
-        }
-  
-        let report = {
-            name: event.target.location.value,
-            dailyData: dailyData,
         };
 
-        handleAddReport(report);
+        let report = {
+            location: event.target.location.value,
+            owner: user.id,
+            description: "cookie stand",
+            minimum_customers_per_hour: min_customers_per_hour,
+            maximum_customers_per_hour: max_customers_per_hour,
+            average_cookies_per_sale: avg_cookies_per_sale,
+          };
+
+        createResource(report);
+        //event.target.reset();
     }
   
     return(

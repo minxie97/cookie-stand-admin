@@ -1,5 +1,11 @@
-export default function ReportTable({ hours, reports }) {
-    if (reports.length) {
+import useResource from "../hooks/useResource";
+
+export default function ReportTable({hours}) {
+
+    const { resources } = useResource()
+
+    if (resources && resources.length) {
+        
         return (
             <table className="w-8/12 px-3 py-3 mx-auto my-6 text-sm rounded bg-emerald-500">
                 <thead>
@@ -11,7 +17,7 @@ export default function ReportTable({ hours, reports }) {
                 </thead>
 
                 <tbody>
-                    {reports.map((report) => (<ResultsRow key={report.name} report={report}/>))}
+                    {resources.map((report) => (<ResultsRow key={report.location} report={report}/>))}
                 </tbody>
 
                 <tfoot>
@@ -22,14 +28,14 @@ export default function ReportTable({ hours, reports }) {
 
                         {hours.map((hour, index) => (
                         <td key={hour} className="pl-4 font-bold border border-black">
-                            {reports.reduce((prev, curr) => prev + curr.dailyData[index], 0)}
+                            {resources.reduce((prev, curr) => prev + curr.hourly_sales[index], 0)}
                         </td>
                         ))}
 
                         <td className="pl-4 font-bold border border-black">
                             {hours.map((_, index) => 
-                            reports.reduce((prev, curr) => 
-                            prev + curr.dailyData[index], 0))
+                            resources.reduce((prev, curr) => 
+                            prev + curr.hourly_sales[index], 0))
                             .reduce((prev, curr) => prev + curr, 0)}
                         </td>
                         
@@ -48,20 +54,21 @@ export default function ReportTable({ hours, reports }) {
 }
 
 function ResultsRow({ report }) {
+    
     return (
         <tr>
             <td className="pl-4 border border-black">
-                {report.name}
+                {report.location}
             </td>
 
-            {report.dailyData.map((hourSalesNumber, index) => (
+            {report.hourly_sales.map((hourSalesNumber, index) => (
             <td className="pl-4 border border-black" key={index}>
                 {hourSalesNumber}
             </td>
             ))}
             
             <td className="pl-4 border border-black">
-                {report.dailyData.reduce((prev, curr) => prev + curr)}
+                {report.hourly_sales.reduce((prev, curr) => prev + curr)}
             </td>
         </tr>
     );
